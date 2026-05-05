@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Heart, Instagram, ChevronRight, Star, ShieldCheck, Truck, Clock, Menu, X } from 'lucide-react';
+import { 
+  ShoppingCart, 
+  Heart, 
+  Instagram, 
+  ChevronRight, 
+  Star, 
+  ShieldCheck, 
+  Truck, 
+  Clock, 
+  Menu, 
+  X,
+  ArrowRight
+} from 'lucide-react';
 
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,188 +23,171 @@ const App = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Paleta de colores basada en la referencia:
-  // Verde Menta: #7BD3C1
-  // Coral/Rosa: #F8719D
-  // Amarillo: #FDE68A
-  // Azul Suave: #8BB2E8
-
   const products = [
     {
       id: 1,
       name: "Combo Ohana",
       desc: "La combinación perfecta para compartir en familia con tus peludos.",
       price: "15.00",
-      color: "bg-amber-100",
-      tag: "Popular",
-      emoji: "🌸"
+      color: "bg-[#FDE68A]", // Amarillo de la imagen
+      tag: "Destacado",
+      emoji: "🌸",
+      image: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=400"
     },
     {
       id: 2,
       name: "Línea Cuchurrumín",
       desc: "Snacks funcionales ideales para paseos y entrenamiento positivo.",
       price: "4.00",
-      color: "bg-rose-100",
+      color: "bg-[#F8719D]", // Rosa/Coral de la imagen
       tag: "Nuevo",
-      emoji: "✨"
+      emoji: "✨",
+      image: "https://images.unsplash.com/photo-1591768793355-74d7c8696e93?auto=format&fit=crop&q=80&w=400"
     },
     {
       id: 3,
-      name: "Patas de Pollo & Remolacha",
+      name: "Patas de Pollo",
       desc: "Altas en colágeno natural para articulaciones fuertes y sanas.",
       price: "4.50",
-      color: "bg-teal-50",
+      color: "bg-[#7BD3C1]", // Verde menta de la imagen
       tag: "Saludable",
-      emoji: "🍗"
+      emoji: "🍗",
+      image: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&w=400"
     },
     {
       id: 4,
       name: "Gelatina Funcional",
       desc: "El clásico de la casa. Hidratación y nutrición en cada bocado.",
       price: "3.50",
-      color: "bg-blue-50",
+      color: "bg-[#8BB2E8]", // Azul suave
       tag: "Best Seller",
-      emoji: "🍮"
+      emoji: "🍮",
+      image: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=400"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-800">
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'}`}>
+    <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900">
+      {/* Navegación */}
+      <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg py-3' : 'bg-transparent py-6'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-black tracking-tighter text-[#7BD3C1]">COPITÓN</span>
+          <div className="flex items-center gap-2 group cursor-pointer">
+            <div className="w-10 h-10 bg-[#7BD3C1] rounded-xl flex items-center justify-center text-white font-black text-xl rotate-3 group-hover:rotate-12 transition-transform">C</div>
+            <span className="text-2xl font-black tracking-tighter text-[#334155]">COPITÓN</span>
           </div>
           
-          <div className="hidden md:flex items-center gap-8 font-medium text-sm uppercase tracking-wider">
+          <div className="hidden md:flex items-center gap-10 font-bold text-[13px] uppercase tracking-[0.15em]">
             <a href="#" className="hover:text-[#F8719D] transition-colors">Productos</a>
             <a href="#" className="hover:text-[#F8719D] transition-colors">Beneficios</a>
             <a href="#" className="hover:text-[#F8719D] transition-colors">Nosotros</a>
-            <a href="#" className="hover:text-[#F8719D] transition-colors">Contacto</a>
-            <button className="bg-[#F8719D] text-white px-6 py-2 rounded-full hover:bg-[#e05686] transition-all shadow-lg shadow-rose-200">
+            <button className="bg-[#F8719D] text-white px-8 py-3 rounded-full hover:bg-[#e05686] transition-all shadow-lg shadow-rose-200 active:scale-95">
               Pedir Ahora
             </button>
           </div>
 
-          <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X /> : <Menu />}
+          <button className="md:hidden p-2 bg-white rounded-full shadow-md" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-[#7BD3C1]/10">
-        {/* Background Decorative Text */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20vw] font-black text-[#7BD3C1]/5 pointer-events-none select-none">
-          COPITÓN
-        </div>
+      {/* Hero Section - Estética Gemini Referencia */}
+      <section className="relative pt-32 pb-20 md:pt-44 md:pb-40 overflow-hidden">
+        {/* Background Shapes */}
+        <div className="absolute top-0 right-0 w-[50%] h-[100%] bg-[#7BD3C1]/10 rounded-bl-[100px] -z-10 animate-pulse"></div>
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-[#F8719D]/5 rounded-full blur-3xl -z-10"></div>
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h1 className="text-5xl md:text-7xl font-black leading-tight mb-6">
-              ¡La felicidad que se <span className="text-[#F8719D] underline decoration-wavy underline-offset-8">come</span>!
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+          <div className="animate-in fade-in slide-in-from-left duration-1000">
+            <div className="inline-flex items-center gap-2 bg-white border border-slate-200 px-4 py-2 rounded-full text-sm font-bold text-slate-500 mb-6 shadow-sm">
+              <Star size={16} className="text-amber-400 fill-amber-400" />
+              <span>Snacks 100% Naturales</span>
+            </div>
+            <h1 className="text-5xl md:text-8xl font-black leading-[0.9] mb-8 text-[#1E293B]">
+              La felicidad <br/> que <span className="text-[#F8719D] italic">se come</span>
             </h1>
-            <p className="text-xl text-slate-600 mb-8 max-w-lg leading-relaxed">
-              Preparados 100% naturales, funcionales y deliciosos. Sin conservantes, sin colorantes artificiales... ¡solo amor para tu mejor amigo!
+            <p className="text-lg md:text-xl text-slate-500 mb-10 max-w-lg leading-relaxed">
+              Preparados artesanales, funcionales y deliciosos. Sin conservantes, solo ingredientes reales para el corazón de tu hogar.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <button className="bg-[#F8719D] text-white px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-xl shadow-rose-200">
-                ¡Pide Ya!
+            <div className="flex flex-col sm:flex-row gap-5">
+              <button className="bg-[#334155] text-white px-10 py-5 rounded-full font-black text-lg hover:bg-black transition-all shadow-xl shadow-slate-200 flex items-center justify-center gap-3 group">
+                Explorar Menú <ArrowRight className="group-hover:translate-x-2 transition-transform" />
               </button>
-              <button className="bg-white border-2 border-[#7BD3C1] text-[#7BD3C1] px-8 py-4 rounded-full font-bold text-lg hover:bg-[#7BD3C1] hover:text-white transition-all">
-                Ver Menú
+              <button className="bg-white border-2 border-[#7BD3C1] text-[#7BD3C1] px-10 py-5 rounded-full font-black text-lg hover:bg-[#7BD3C1] hover:text-white transition-all flex items-center justify-center">
+                Nuestro Instagram
               </button>
             </div>
           </div>
-          <div className="relative">
-            <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3 bg-white p-4">
-               {/* Placeholder representativo de la imagen del perro con snack */}
-               <div className="w-full h-full bg-[#FDE68A] rounded-2xl flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle,white_1px,transparent_1px)] bg-[length:20px_20px]"></div>
-                  <img 
-                    src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=800" 
-                    alt="Perrito feliz con Copitón" 
-                    className="w-full h-full object-cover"
-                  />
-               </div>
+
+          <div className="relative animate-in fade-in zoom-in duration-1000 delay-300">
+            <div className="relative z-10 aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-white bg-white">
+              <img 
+                src="https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&q=80&w=800" 
+                alt="Perro feliz" 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+              <div className="absolute bottom-8 left-8 right-8 bg-white/90 backdrop-blur p-6 rounded-2xl">
+                <p className="font-black text-xl text-slate-800">"El premio favorito de Copitón"</p>
+                <div className="flex gap-1 mt-2 text-amber-400">
+                  <Star size={16} fill="currentColor" />
+                  <Star size={16} fill="currentColor" />
+                  <Star size={16} fill="currentColor" />
+                  <Star size={16} fill="currentColor" />
+                  <Star size={16} fill="currentColor" />
+                </div>
+              </div>
             </div>
-            {/* Floating Badges */}
-            <div className="absolute -top-6 -right-6 bg-white p-4 rounded-2xl shadow-xl animate-bounce">
-              <span className="text-3xl">🐶</span>
-            </div>
-            <div className="absolute -bottom-6 -left-6 bg-[#7BD3C1] text-white p-4 rounded-2xl shadow-xl font-bold">
-              100% Natural
-            </div>
+            
+            {/* Decoración similar a la imagen generada */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#FDE68A] rounded-full -z-10 mix-blend-multiply opacity-70"></div>
+            <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-[#7BD3C1] rounded-[4rem] -z-10 rotate-12 opacity-30"></div>
           </div>
         </div>
       </section>
 
-      {/* Stats/Benefits Bar */}
-      <section className="py-12 border-y border-slate-100 bg-white">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="flex items-center gap-4">
-            <div className="bg-[#7BD3C1]/20 p-3 rounded-full"><Clock className="text-[#7BD3C1]" /></div>
-            <div>
-              <h4 className="font-bold">Frescura Diaria</h4>
-              <p className="text-sm text-slate-500">Hechos bajo pedido</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 border-y md:border-y-0 md:border-x border-slate-100 py-6 md:py-0 md:px-8">
-            <div className="bg-[#F8719D]/20 p-3 rounded-full"><ShieldCheck className="text-[#F8719D]" /></div>
-            <div>
-              <h4 className="font-bold">Grado Humano</h4>
-              <p className="text-sm text-slate-500">Ingredientes de alta calidad</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="bg-[#8BB2E8]/20 p-3 rounded-full"><Truck className="text-[#8BB2E8]" /></div>
-            <div>
-              <h4 className="font-bold">Envíos Rápidos</h4>
-              <p className="text-sm text-slate-500">Directo a tu puerta</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Menu Grid - Inspirado en Bone Appetit / Imagen adjunta */}
-      <section className="py-24 bg-slate-50">
+      {/* Grid de Beneficios - Estilo Tarjetas de la Imagen */}
+      <section className="py-24 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-4">Nuestros Favoritos</h2>
-            <p className="text-slate-500 max-w-xl mx-auto italic font-serif text-lg">
-              "Salud funcional envuelta en sabor irresistible"
-            </p>
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div>
+              <h2 className="text-4xl md:text-6xl font-black text-[#1E293B] mb-4 tracking-tighter">Nuestros Favoritos</h2>
+              <p className="text-xl text-slate-500 font-medium">Nutrición que menea colitas.</p>
+            </div>
+            <button className="text-[#F8719D] font-black flex items-center gap-2 hover:gap-4 transition-all">
+              Ver todo el catálogo <ArrowRight size={20} />
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {products.map((product) => (
-              <div key={product.id} className={`group ${product.color} rounded-[2.5rem] p-6 transition-all hover:-translate-y-2 hover:shadow-2xl flex flex-col`}>
-                <div className="flex justify-between items-start mb-6">
-                  <span className="bg-white/80 backdrop-blur text-[10px] uppercase font-black tracking-widest px-3 py-1 rounded-full">
-                    {product.tag}
-                  </span>
-                  <button className="bg-white/50 p-2 rounded-full hover:bg-white transition-colors">
-                    <Heart size={16} className="text-[#F8719D]" />
-                  </button>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {products.slice(0, 3).map((product) => (
+              <div key={product.id} className="group relative">
+                <div className={`${product.color} rounded-[3rem] p-8 h-full transition-all duration-500 group-hover:-translate-y-4 shadow-xl shadow-slate-100 flex flex-col`}>
+                  <div className="flex justify-between items-start mb-8">
+                    <span className="bg-white/90 backdrop-blur px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-800 shadow-sm">
+                      {product.tag}
+                    </span>
+                    <div className="bg-white/40 p-3 rounded-2xl group-hover:bg-white transition-colors duration-300">
+                      <Heart className="text-white fill-white group-hover:text-[#F8719D] group-hover:fill-[#F8719D] transition-colors" size={20} />
+                    </div>
+                  </div>
 
-                <div className="bg-white/40 rounded-3xl aspect-square mb-6 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform">
-                  {product.emoji}
-                </div>
+                  <div className="relative mb-8 aspect-video rounded-3xl overflow-hidden shadow-lg border-4 border-white/30">
+                    <img src={product.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={product.name} />
+                    <div className="absolute top-4 right-4 text-4xl">{product.emoji}</div>
+                  </div>
 
-                <h3 className="text-xl font-black mb-2 flex items-center gap-2">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-slate-600 mb-6 flex-grow leading-snug">
-                  {product.desc}
-                </p>
+                  <h3 className="text-3xl font-black mb-3 text-slate-900">{product.name}</h3>
+                  <p className="text-slate-700/80 font-medium leading-snug mb-8 flex-grow">
+                    {product.desc}
+                  </p>
 
-                <div className="mt-auto pt-6 border-t border-black/5 flex justify-between items-center">
-                  <span className="text-2xl font-black">${product.price}</span>
-                  <button className="bg-white text-slate-900 px-4 py-2 rounded-full text-sm font-bold shadow-sm hover:bg-[#F8719D] hover:text-white transition-all flex items-center gap-1">
-                    Pedir <ChevronRight size={14} />
-                  </button>
+                  <div className="flex items-center justify-between mt-auto">
+                    <span className="text-3xl font-black text-slate-900">${product.price}</span>
+                    <button className="bg-white text-slate-900 px-6 py-3 rounded-2xl font-black hover:bg-slate-900 hover:text-white transition-all shadow-md active:scale-95">
+                      Pedir Ahora
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -200,69 +195,76 @@ const App = () => {
         </div>
       </section>
 
-      {/* Social Section */}
-      <section className="py-20 bg-white">
+      {/* Sección Instagram Estilo Moderno */}
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-[#8BB2E8] rounded-[3rem] p-12 text-white relative overflow-hidden">
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-              <div>
-                <h2 className="text-3xl md:text-5xl font-black mb-4 flex items-center gap-4">
-                  Síguenos en Instagram <Instagram size={40} />
-                </h2>
-                <p className="text-xl opacity-90 max-w-md">
-                  Sé parte de nuestra comunidad de #CopitonLovers y no te pierdas nuestras novedades.
-                </p>
-              </div>
+          <div className="bg-[#8BB2E8] rounded-[4rem] p-12 md:p-20 text-white relative overflow-hidden flex flex-col md:flex-row items-center gap-12 shadow-2xl shadow-blue-200">
+            <div className="relative z-10 flex-1">
+              <h2 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
+                Únete a la familia <br/> @gelatinacopitom
+              </h2>
+              <p className="text-xl opacity-90 mb-10 max-w-md font-medium">
+                Consejos de nutrición, nuevos lanzamientos y muchos perritos felices.
+              </p>
               <a 
                 href="https://www.instagram.com/gelatinacopitom/" 
                 target="_blank" 
-                rel="noreferrer"
-                className="bg-white text-[#8BB2E8] px-10 py-5 rounded-full font-black text-xl hover:scale-105 transition-transform"
+                className="inline-block bg-white text-[#8BB2E8] px-12 py-5 rounded-full font-black text-xl hover:scale-105 active:scale-95 transition-all shadow-xl"
               >
-                @gelatinacopitom
+                Seguir en Instagram
               </a>
             </div>
-            {/* Decorative circles */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full -ml-10 -mb-10"></div>
+            <div className="flex-1 grid grid-cols-2 gap-4 relative z-10 w-full md:w-auto">
+              <div className="aspect-square bg-white/20 rounded-3xl overflow-hidden rotate-3">
+                <img src="https://images.unsplash.com/photo-1534361960057-19889db9621e?auto=format&fit=crop&q=80&w=400" className="w-full h-full object-cover" />
+              </div>
+              <div className="aspect-square bg-white/20 rounded-3xl overflow-hidden -rotate-6">
+                <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=400" className="w-full h-full object-cover" />
+              </div>
+            </div>
+            {/* Decoración */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-10 rounded-full -mr-48 -mt-48"></div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white pt-20 pb-10">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
-          <div className="col-span-1 md:col-span-2">
-            <span className="text-3xl font-black tracking-tighter text-[#7BD3C1] mb-6 block">COPITÓN</span>
-            <p className="text-slate-400 max-w-sm mb-6">
-              Creamos snacks funcionales con propósito. Porque tu mascota merece la mejor nutrición con el sabor más divertido.
-            </p>
-            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#F8719D] transition-colors cursor-pointer">
-                <Instagram size={20} />
+      <footer className="bg-slate-900 text-white pt-24 pb-12">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center gap-2 mb-8">
+                <div className="w-10 h-10 bg-[#7BD3C1] rounded-xl flex items-center justify-center text-white font-black text-xl rotate-3">C</div>
+                <span className="text-3xl font-black tracking-tighter text-white">COPITÓN</span>
               </div>
+              <p className="text-slate-400 text-lg max-w-sm leading-relaxed">
+                Reinventando la nutrición canina con snacks funcionales que son tan divertidos como saludables.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-black text-xl mb-8">Menú</h4>
+              <ul className="space-y-4 text-slate-400 font-bold">
+                <li><a href="#" className="hover:text-[#7BD3C1] transition-colors">Productos</a></li>
+                <li><a href="#" className="hover:text-[#7BD3C1] transition-colors">Beneficios</a></li>
+                <li><a href="#" className="hover:text-[#7BD3C1] transition-colors">Blog Perruno</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-black text-xl mb-8">Ubicación</h4>
+              <p className="text-slate-400 font-bold leading-relaxed">
+                Caracas, Venezuela.<br/>
+                Envíos a toda la ciudad.<br/>
+                WhatsApp: +XX XXX XXX XXXX
+              </p>
             </div>
           </div>
-          <div>
-            <h4 className="font-bold mb-6 text-lg">Explorar</h4>
-            <ul className="space-y-4 text-slate-400">
-              <li><a href="#" className="hover:text-white">Menú Completo</a></li>
-              <li><a href="#" className="hover:text-white">Combos</a></li>
-              <li><a href="#" className="hover:text-white">Preguntas Frecuentes</a></li>
-              <li><a href="#" className="hover:text-white">Cómo Comprar</a></li>
-            </ul>
+          <div className="pt-12 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6 text-slate-500 font-bold text-sm">
+            <p>© {new Date().getFullYear()} Gelatina Copitón. Todos los derechos reservados.</p>
+            <div className="flex gap-8">
+              <a href="#" className="hover:text-white transition-colors">Privacidad</a>
+              <a href="#" className="hover:text-white transition-colors">Términos</a>
+            </div>
           </div>
-          <div>
-            <h4 className="font-bold mb-6 text-lg">Contacto</h4>
-            <ul className="space-y-4 text-slate-400">
-              <li>WhatsApp: +XX XXX XXX XXXX</li>
-              <li>Email: hola@copiton.com</li>
-              <li>Base: Caracas, Venezuela</li>
-            </ul>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-6 pt-10 border-t border-slate-800 text-center text-slate-500 text-sm">
-          © {new Date().getFullYear()} Gelatina Copitón - Hecho con ❤️ para tus peludos.
         </div>
       </footer>
     </div>
