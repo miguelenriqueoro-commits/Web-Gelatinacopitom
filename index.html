@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gelatinacopitom | V0.1.1</title>
+    <title>Gelatinacopitom | V0.1.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -27,6 +27,7 @@
         
         .bg-strawberry { background-color: #FF8B94; }
         .text-strawberry { color: #FF8B94; }
+        .bg-veggie-green { background-color: #A8E6CF; }
         
         /* Sistema de Vistas con Animación de Deslizamiento */
         .page-view { 
@@ -108,6 +109,14 @@
             margin-bottom: 1rem;
             display: block;
         }
+
+        .delete-btn {
+            color: #ef4444;
+            transition: transform 0.2s ease;
+        }
+        .delete-btn:hover {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="text-gray-800" id="main-body">
@@ -166,7 +175,7 @@
                 <p class="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto font-medium">Preparados 100% naturales, funcionales y deliciosos. <br> Sin químicos ni conservantes, solo amor en cada bocado.</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="#combos" class="bg-strawberry text-white px-10 py-4 rounded-full font-black text-lg shadow-xl shadow-pink-100 hover:opacity-90 transition">Ver Combos</a>
-                    <a href="#lineas" class="bg-gray-100 text-gray-800 px-10 py-4 rounded-full font-black text-lg hover:bg-gray-200 transition">Nuestras Líneas</a>
+                    <a href="#lineas" class="bg-veggie-green text-green-900 px-10 py-4 rounded-full font-black text-lg hover:opacity-80 transition">Nuestras Líneas</a>
                 </div>
             </div>
         </header>
@@ -435,6 +444,10 @@
                                     <option>Sambil Chacao (Gratis)</option>
                                     <option>Plaza Venezuela (Gratis)</option>
                                 </optgroup>
+                                <optgroup label="Miranda">
+                                    <option>Guarenas ($1 - $1.5)</option>
+                                    <option>Guatire ($2 - $2.5)</option>
+                                </optgroup>
                                 <optgroup label="Delivery VIP (+$5.00)">
                                     <option>Parque Miranda</option>
                                     <option>Las Mercedes</option>
@@ -448,6 +461,9 @@
                             <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Método de Pago</label>
                             <select id="cust-payment" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-pink-100 transition">
                                 <option>Pago Móvil</option>
+                                <option>Transferencia Bancaria</option>
+                                <option>Zinli</option>
+                                <option>Wally</option>
                                 <option>Efectivo $</option>
                                 <option>Binance USDT</option>
                             </select>
@@ -471,7 +487,7 @@
 
     <script>
         // CONFIGURACIÓN GLOBAL
-        const WHATSAPP_PHONE = "584128657151"; // Cambiar por tu número real para pruebas
+        const WHATSAPP_PHONE = "584120000000"; // Cambiar por tu número real para pruebas
         let cart = {};
 
         function switchView(viewId) {
@@ -518,6 +534,18 @@
             updateCartCount();
         }
 
+        function removeFromCart(id) {
+            if (cart[id]) {
+                cart[id].qty = 0;
+                // Actualizar contador en la UI de home por si acaso
+                const qtyLabel = document.getElementById(`qty-${id}`);
+                if (qtyLabel) qtyLabel.innerText = 0;
+                
+                updateCartCount();
+                renderCart();
+            }
+        }
+
         function updateCartCount() {
             let totalQty = 0;
             for (let id in cart) {
@@ -540,9 +568,14 @@
                     total += itemTotal;
                     container.innerHTML += `
                         <div class="flex justify-between items-center bg-gray-50 p-5 rounded-2xl border border-gray-100">
-                            <div>
-                                <p class="font-bold text-gray-900">${id}</p>
-                                <p class="text-xs text-strawberry font-bold uppercase tracking-widest">${cart[id].qty} x $${cart[id].price.toFixed(2)}</p>
+                            <div class="flex items-center gap-4">
+                                <button onclick="removeFromCart('${id}')" class="delete-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                </button>
+                                <div>
+                                    <p class="font-bold text-gray-900">${id}</p>
+                                    <p class="text-xs text-strawberry font-bold uppercase tracking-widest">${cart[id].qty} x $${cart[id].price.toFixed(2)}</p>
+                                </div>
                             </div>
                             <span class="font-black text-lg">$${itemTotal.toFixed(2)}</span>
                         </div>
@@ -570,12 +603,12 @@
             const delivery = document.getElementById('cust-delivery').value;
             const payment = document.getElementById('cust-payment').value;
 
-            let mensaje = `🐾 PEDIDO GELATINACOPITOM%0A`;
-            mensaje += `----------------------------------------------------%0A`;
-            mensaje += `Nombre: ${name}%0A`;
-            mensaje += `Entrega: ${delivery}%0A`;
-            mensaje += `Pago: ${payment}%0A%0A`;
-            mensaje += `DETALLE DEL PEDIDO:%0A`;
+            let mensaje = `🐾 *PEDIDO GELATINACOPITOM*%0A`;
+            mensaje += `--------------------------%0A`;
+            mensaje += `*Nombre:* ${name}%0A`;
+            mensaje += `*Entrega:* ${delivery}%0A`;
+            mensaje += `*Pago:* ${payment}%0A%0A`;
+            mensaje += `*DETALLE DEL PEDIDO:*%0A`;
 
             let total = 0;
             for (let id in cart) {
@@ -586,9 +619,9 @@
                 }
             }
 
-            mensaje += `%0ATOTAL A PAGAR: $${total.toFixed(2)}%0A`;
-            mensaje += `----------------------------------------------------%0A`;
-            mensaje += `Enviado desde el catálogo web`;
+            mensaje += `%0A*TOTAL A PAGAR: $${total.toFixed(2)}*%0A`;
+            mensaje += `--------------------------%0A`;
+            mensaje += `_Enviado desde el catálogo web_`;
 
             window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${mensaje}`, '_blank');
         }
