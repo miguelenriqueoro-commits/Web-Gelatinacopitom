@@ -570,12 +570,12 @@
             const delivery = document.getElementById('cust-delivery').value;
             const payment = document.getElementById('cust-payment').value;
 
-            let mensaje = `🐾 *PEDIDO GELATINACOPITOM*%0A`;
+            let mensaje = `🐾 PEDIDO GELATINACOPITOM%0A`;
             mensaje += `--------------------------%0A`;
-            mensaje += `*Nombre:* ${name}%0A`;
-            mensaje += `*Entrega:* ${delivery}%0A`;
-            mensaje += `*Pago:* ${payment}%0A%0A`;
-            mensaje += `*DETALLE DEL PEDIDO:*%0A`;
+            mensaje += `Nombre: ${name}%0A`;
+            mensaje += `Entrega: ${delivery}%0A`;
+            mensaje += `Pago: ${payment}%0A%0A`;
+            mensaje += `DETALLE DEL PEDIDO:%0A`;
 
             let total = 0;
             for (let id in cart) {
@@ -586,9 +586,9 @@
                 }
             }
 
-            mensaje += `%0A*TOTAL A PAGAR: $${total.toFixed(2)}*%0A`;
+            mensaje += `%0ATOTAL A PAGAR: $${total.toFixed(2)}%0A`;
             mensaje += `--------------------------%0A`;
-            mensaje += `_Enviado desde el catálogo web_`;
+            mensaje += `Enviado desde el catálogo web`;
 
             window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${mensaje}`, '_blank');
         }
