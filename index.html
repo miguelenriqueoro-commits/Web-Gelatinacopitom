@@ -571,7 +571,7 @@
             const payment = document.getElementById('cust-payment').value;
 
             let mensaje = `🐾 PEDIDO GELATINACOPITOM%0A`;
-            mensaje += `--------------------------%0A`;
+            mensaje += `----------------------------------------------------%0A`;
             mensaje += `Nombre: ${name}%0A`;
             mensaje += `Entrega: ${delivery}%0A`;
             mensaje += `Pago: ${payment}%0A%0A`;
@@ -587,7 +587,7 @@
             }
 
             mensaje += `%0ATOTAL A PAGAR: $${total.toFixed(2)}%0A`;
-            mensaje += `--------------------------%0A`;
+            mensaje += `----------------------------------------------------%0A`;
             mensaje += `Enviado desde el catálogo web`;
 
             window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${mensaje}`, '_blank');
