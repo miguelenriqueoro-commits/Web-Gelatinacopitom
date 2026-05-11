@@ -3,90 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gelatinacopitom | V0.2.4</title>
+    <title>Gelatinacopitom | V0.1.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         html { scroll-behavior: smooth; }
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #ffffff; 
+            background-color: #fdfdfd; 
             overflow-x: hidden;
         }
-        
-        /* Perspectiva y Efecto Flip de Tarjetas */
-        .card-perspective {
-            perspective: 1200px;
-            height: 480px;
-        }
-
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-            cursor: pointer;
-        }
-
-        .card-perspective.is-flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            border-radius: 2.5rem;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-back {
-            transform: rotateY(180deg);
-            background: #f8fafc;
-            border: 2px solid #f1f5f9;
-            padding: 2rem;
-            justify-content: center;
-        }
-
         .glass-nav { 
-            background: rgba(255, 255, 255, 0.95); 
+            background: rgba(255, 255, 255, 0.9); 
             backdrop-filter: blur(12px); 
             -webkit-backdrop-filter: blur(12px);
         }
         
+        /* Animaciones de Hover */
+        .product-card { 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .product-card:hover { transform: translateY(-8px); }
+        
         .bg-strawberry { background-color: #FF8B94; }
         .text-strawberry { color: #FF8B94; }
+        .bg-veggie-green { background-color: #A8E6CF; }
         
-        .hero-badge {
-            background: #e6fcf5;
-            color: #20c997;
-            padding: 6px 16px;
-            border-radius: 99px;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.05em;
+        /* Sistema de Vistas con Animación de Deslizamiento */
+        .page-view { 
+            display: none; 
+            opacity: 0;
+            transition: all 0.5s ease-in-out;
+        }
+        .active-view { 
+            display: block; 
+            opacity: 1;
+            animation: slideInLeft 0.5s forwards;
+        }
+        .exit-view {
+            display: block;
+            animation: slideOutRight 0.5s forwards;
         }
 
-        .qty-btn {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            font-weight: bold;
-            transition: all 0.2s;
+        @keyframes slideInLeft {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100px); opacity: 0; }
+        }
+
+        #mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        #mobile-menu.open { transform: translateX(0); }
 
         .cart-badge {
             position: absolute;
             top: -5px;
             right: -5px;
-            background: #FF8B94;
+            background: #ef4444;
             color: white;
             font-size: 10px;
             font-weight: bold;
@@ -94,124 +73,293 @@
             border-radius: 99px;
         }
 
-        /* Estilo para los inputs del carrito */
-        .input-minimal {
-            background: #f8fafc;
-            border: 2px solid transparent;
-            transition: all 0.3s;
+        .combo-card {
+            border-radius: 2rem;
+            background: #ffffff;
+            border: 1px solid #f3f4f6;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-        .input-minimal:focus {
-            border-color: #FF8B94;
-            background: white;
-            outline: none;
+        .combo-thumb {
+            aspect-ratio: 16/10;
+            background: #fff9f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1.5rem;
+            margin: 0.75rem;
+        }
+        .combo-thumb.blue { background: #f0f7ff; }
+        .combo-thumb.pink { background: #fff5f7; }
+        .combo-thumb.green { background: #f0fff4; }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: 1rem;
+            padding: 0.4rem;
+            border: 1px solid rgba(241, 245, 249, 1);
+        }
+
+        .line-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .delete-btn {
+            color: #ef4444;
+            transition: transform 0.2s ease;
+        }
+        .delete-btn:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
-<body class="text-slate-900">
+<body class="text-gray-800" id="main-body">
 
     <!-- Navegación -->
-    <nav class="fixed w-full z-[100] glass-nav border-b border-slate-100">
+    <nav class="fixed w-full z-[100] glass-nav border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
             <div class="flex items-center gap-2 cursor-pointer" onclick="switchView('home')">
-                <div class="w-10 h-10 bg-strawberry rounded-full flex items-center justify-center text-white font-black text-xl italic shadow-lg shadow-pink-100">G</div>
-                <div class="text-2xl font-black tracking-tighter uppercase">Gelatinacopitom</div>
+                <div class="w-10 h-10 bg-strawberry rounded-full flex items-center justify-center text-white font-black text-xl italic">G</div>
+                <div class="text-xl md:text-2xl font-black tracking-tighter text-gray-900 uppercase">Gelatinacopitom</div>
             </div>
 
-            <div class="flex items-center gap-6">
-                <button onclick="switchView('cart')" class="relative p-3 hover:bg-slate-50 rounded-full transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.1-5.38a.5.5 0 0 0-.49-.6H6.14"/></svg>
+            <div class="hidden lg:flex space-x-8 text-xs font-bold uppercase tracking-widest text-gray-500">
+                <a href="#lineas" onclick="switchView('home')" class="hover:text-strawberry transition">Líneas</a>
+                <a href="#combos" onclick="switchView('home')" class="hover:text-strawberry transition">Combos</a>
+                <a href="#metodo" onclick="switchView('home')" class="hover:text-strawberry transition">Nuestros Métodos</a>
+                <a href="javascript:void(0)" onclick="switchView('about')" class="hover:text-strawberry transition">Sobre Nosotros</a>
+                <a href="https://www.instagram.com/gelatinacopitom/" target="_blank" class="hover:text-strawberry transition italic">@gelatinacopitom</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="switchView('cart')" class="relative p-2 hover:bg-gray-100 rounded-full transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.1-5.38a.5.5 0 0 0-.49-.6H6.14"/></svg>
                     <span id="cart-count" class="cart-badge">0</span>
+                </button>
+                <button onclick="toggleMenu(true)" class="lg:hidden p-2 hover:bg-gray-100 rounded-full transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
                 </button>
             </div>
         </div>
     </nav>
 
+    <!-- Menú Lateral -->
+    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-[280px] bg-white z-[110] shadow-2xl p-8 lg:hidden">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleMenu(false)" class="p-2 hover:bg-gray-100 rounded-full transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+        <div class="flex flex-col space-y-6 text-sm font-bold uppercase tracking-widest text-gray-700">
+            <a href="#lineas" onclick="toggleMenu(false); switchView('home')" class="hover:text-strawberry transition">Líneas</a>
+            <a href="#combos" onclick="toggleMenu(false); switchView('home')" class="hover:text-strawberry transition">Combos</a>
+            <a href="#metodo" onclick="toggleMenu(false); switchView('home')" class="hover:text-strawberry transition">Nuestros Métodos</a>
+            <a href="javascript:void(0)" onclick="toggleMenu(false); switchView('about')" class="hover:text-strawberry transition">Sobre Nosotros</a>
+            <hr class="border-gray-100">
+            <a href="https://www.instagram.com/gelatinacopitom/" target="_blank" class="text-strawberry italic lowercase tracking-normal text-lg">@gelatinacopitom</a>
+        </div>
+    </div>
+
     <!-- VISTA: HOME -->
-    <main id="view-home">
-        
-        <!-- Hero Section -->
-        <header class="pt-40 pb-24 text-center px-6">
-            <div class="mb-8">
-                <span class="hero-badge">PRODUCTOS ARTESANALES VENEZOLANOS 🇻🇪</span>
-            </div>
-            <h1 class="text-5xl md:text-[85px] font-black mb-8 tracking-tighter leading-[0.9]">
-                ¡La felicidad que se <br>
-                <span class="text-strawberry italic font-light">comparte!</span>
-            </h1>
-            <p class="text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto mb-12">
-                Preparados 100% naturales, funcionales y deliciosos. <br>
-                Sin químicos ni conservantes, solo amor en cada bocado.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#combos" class="bg-strawberry text-white px-12 py-5 rounded-full font-black text-lg shadow-xl shadow-pink-100 hover:scale-105 transition transform">Ver Combos</a>
-                <a href="#lineas" class="bg-slate-100 text-slate-900 px-12 py-5 rounded-full font-black text-lg hover:bg-slate-200 transition">Explorar Líneas</a>
+    <main id="view-home" class="page-view active-view">
+        <header class="relative pt-40 pb-20 px-6 text-center overflow-hidden">
+            <div class="max-w-4xl mx-auto relative z-10">
+                <span class="inline-block px-4 py-1 rounded-full bg-green-100 text-green-600 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-6">Productos artesanales Venezolanos 🇻🇪</span>
+                <h1 class="text-5xl md:text-8xl font-black mb-8 leading-[0.9] tracking-tighter">¡La felicidad que se <span class="text-strawberry italic">comparte!</span></h1>
+                <p class="text-lg md:text-xl text-gray-500 mb-12 max-w-2xl mx-auto font-medium">Preparados 100% naturales, funcionales y deliciosos. <br> Sin químicos ni conservantes, solo amor en cada bocado.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#combos" class="bg-strawberry text-white px-10 py-4 rounded-full font-black text-lg shadow-xl shadow-pink-100 hover:opacity-90 transition">Ver Combos</a>
+                    <a href="#lineas" class="bg-veggie-green text-green-900 px-10 py-4 rounded-full font-black text-lg hover:opacity-80 transition">Nuestras Líneas</a>
+                </div>
             </div>
         </header>
 
-        <!-- Beneficios -->
-        <section class="max-w-7xl mx-auto px-6 mb-32">
-            <h2 class="text-5xl font-black mb-12 tracking-tighter italic">Beneficios</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 flex items-center gap-6 shadow-sm">
-                    <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 font-black text-xl">100%</div>
-                    <div>
-                        <h4 class="font-black text-xl uppercase tracking-tighter">Naturales</h4>
-                        <p class="text-slate-400 text-sm">Materia prima fresca local.</p>
-                    </div>
+        <!-- Beneficios Mini -->
+        <section class="pb-24 px-6">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 flex items-center gap-5 shadow-sm">
+                    <div class="w-14 h-14 bg-green-50 rounded-2xl flex-shrink-0 flex items-center justify-center text-green-500 font-bold text-xl">100%</div>
+                    <div><h4 class="font-extrabold text-gray-900">Naturales</h4><p class="text-gray-400 text-sm">Materia prima fresca.</p></div>
                 </div>
-                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 flex items-center gap-6 shadow-sm">
-                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-2xl">⚡</div>
-                    <div>
-                        <h4 class="font-black text-xl uppercase tracking-tighter">Funcionales</h4>
-                        <p class="text-slate-400 text-sm">Beneficios nutricionales reales.</p>
-                    </div>
+                <div class="bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 flex items-center gap-5 shadow-sm">
+                    <div class="w-14 h-14 bg-blue-50 rounded-2xl flex-shrink-0 flex items-center justify-center text-2xl">✨</div>
+                    <div><h4 class="font-extrabold text-gray-900">Funcionales</h4><p class="text-gray-400 text-sm">Beneficios reales.</p></div>
                 </div>
-                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 flex items-center gap-6 shadow-sm">
-                    <div class="w-16 h-16 bg-pink-50 rounded-2xl flex items-center justify-center text-2xl">💖</div>
-                    <div>
-                        <h4 class="font-black text-xl uppercase tracking-tighter">Artesanales</h4>
-                        <p class="text-slate-400 text-sm">Elaborados con cuidado manual.</p>
+                <div class="bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 flex items-center gap-5 shadow-sm">
+                    <div class="w-14 h-14 bg-pink-50 rounded-2xl flex-shrink-0 flex items-center justify-center text-2xl">🏠</div>
+                    <div><h4 class="font-extrabold text-gray-900">Artesanales</h4><p class="text-gray-400 text-sm">Hechos en casa.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Líneas -->
+        <section id="lineas" class="py-24 bg-gray-50/50 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-black mb-2 tracking-tight uppercase">Nuestras Líneas</h2>
+                    <p class="text-gray-500 font-medium max-w-2xl mx-auto">Soluciones específicas para su bienestar diario.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Vitalidad -->
+                    <div class="product-card bg-white rounded-[40px] p-10 border border-gray-100 shadow-sm relative overflow-hidden flex flex-col">
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-blue-500">Al infinito y más allá</span>
+                            <span class="line-icon">🚀</span>
+                        </div>
+                        <h3 class="text-3xl font-black mb-4 uppercase tracking-tighter">VITALIDAD</h3>
+                        <p class="text-gray-500 mb-10 text-sm leading-relaxed flex-grow">Base de Pata de Pollo y Vegetales. Colágeno puro para sus articulaciones.</p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <div><span class="text-xs font-bold text-gray-400 uppercase">11 Unidades</span><p class="text-xl font-black">$4.00</p></div>
+                                <div class="qty-control w-24">
+                                    <button onclick="updateQty('Vitalidad (11u)', 4.00, -1)" class="w-8 h-8 rounded-lg bg-white border flex items-center justify-center font-black">-</button>
+                                    <span id="qty-Vitalidad (11u)" class="font-bold">0</span>
+                                    <button onclick="updateQty('Vitalidad (11u)', 4.00, 1)" class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center font-black">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Probiótica -->
+                    <div class="product-card bg-strawberry text-white rounded-[40px] p-10 shadow-2xl shadow-pink-200 relative overflow-hidden flex flex-col">
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-pink-100">Línea Cuchurrumin</span>
+                            <span class="line-icon">✨</span>
+                        </div>
+                        <h3 class="text-3xl font-black mb-4 uppercase tracking-tighter">PROBIÓTICA</h3>
+                        <p class="text-pink-50 mb-10 text-sm leading-relaxed flex-grow">Base de Yogurt natural y Frutas reales. Ideal para la digestión.</p>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-4 bg-white/10 rounded-2xl border border-white/10">
+                                <div><span class="text-[10px] font-bold text-pink-100 uppercase">11 Unidades</span><p class="text-xl font-black">$5.00</p></div>
+                                <div class="qty-control w-24 bg-white/20 border-none">
+                                    <button onclick="updateQty('Probiótica (11u)', 5.00, -1)" class="w-8 h-8 rounded-lg bg-white/30 text-white flex items-center justify-center font-black">-</button>
+                                    <span id="qty-Probiótica (11u)" class="font-bold">0</span>
+                                    <button onclick="updateQty('Probiótica (11u)', 5.00, 1)" class="w-8 h-8 rounded-lg bg-white text-strawberry flex items-center justify-center font-black">+</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-white/10 rounded-2xl border border-white/10">
+                                <div><span class="text-[10px] font-bold text-pink-100 uppercase">6 Unidades</span><p class="text-xl font-black">$3.00</p></div>
+                                <div class="qty-control w-24 bg-white/20 border-none">
+                                    <button onclick="updateQty('Probiótica (6u)', 3.00, -1)" class="w-8 h-8 rounded-lg bg-white/30 text-white flex items-center justify-center font-black">-</button>
+                                    <span id="qty-Probiótica (6u)" class="font-bold">0</span>
+                                    <button onclick="updateQty('Probiótica (6u)', 3.00, 1)" class="w-8 h-8 rounded-lg bg-white text-strawberry flex items-center justify-center font-black">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vegetal -->
+                    <div class="product-card bg-[#A8E6CF] rounded-[40px] p-10 border border-green-200 shadow-sm relative overflow-hidden flex flex-col">
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-green-700">De cero a héroe</span>
+                            <span class="line-icon">🌿</span>
+                        </div>
+                        <h3 class="text-3xl font-black mb-4 uppercase tracking-tighter text-green-900">VEGETAL</h3>
+                        <p class="text-green-800/60 mb-10 text-sm leading-relaxed flex-grow">Base de Gelatina sin sabor y Vegetales. Opción ligera y saludable.</p>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-green-200">
+                                <div><span class="text-[10px] font-bold text-green-700 uppercase">11 Unidades</span><p class="text-xl font-black text-green-900">$4.00</p></div>
+                                <div class="qty-control w-24 bg-white/60 border-green-100">
+                                    <button onclick="updateQty('Vegetal (11u)', 4.00, -1)" class="w-8 h-8 rounded-lg bg-white border border-green-200 flex items-center justify-center font-black">-</button>
+                                    <span id="qty-Vegetal (11u)" class="font-bold">0</span>
+                                    <button onclick="updateQty('Vegetal (11u)', 4.00, 1)" class="w-8 h-8 rounded-lg bg-green-600 text-white flex items-center justify-center font-black">+</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-white/40 rounded-2xl border border-green-200">
+                                <div><span class="text-[10px] font-bold text-green-700 uppercase">6 Unidades</span><p class="text-xl font-black text-green-900">$2.00</p></div>
+                                <div class="qty-control w-24 bg-white/60 border-green-100">
+                                    <button onclick="updateQty('Vegetal (6u)', 2.00, -1)" class="w-8 h-8 rounded-lg bg-white border border-green-200 flex items-center justify-center font-black">-</button>
+                                    <span id="qty-Vegetal (6u)" class="font-bold">0</span>
+                                    <button onclick="updateQty('Vegetal (6u)', 2.00, 1)" class="w-8 h-8 rounded-lg bg-green-600 text-white flex items-center justify-center font-black">+</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Cómo lo hacemos -->
-        <section class="max-w-7xl mx-auto px-6 mb-32">
-            <div class="bg-[#1a202c] rounded-[4rem] overflow-hidden flex flex-col lg:flex-row shadow-2xl">
-                <div class="lg:w-1/2 p-12 lg:p-24 flex flex-col justify-center items-center text-center relative border-b lg:border-b-0 lg:border-r border-slate-800">
-                    <h3 class="text-4xl lg:text-5xl font-light italic text-slate-500 mb-4">"Hecho con el corazón"</h3>
-                    <p class="text-slate-600 font-bold uppercase text-[10px] tracking-[0.5em]">Gelatina Copitón - Caracas</p>
-                    
-                    <div class="absolute bottom-12 right-12 bg-strawberry p-8 rounded-[3rem] text-white text-center transform rotate-6 shadow-2xl">
-                        <div class="text-5xl font-black">0%</div>
-                        <div class="text-[10px] font-black uppercase tracking-widest leading-none">Químicos</div>
-                    </div>
+        <!-- Sección Combos -->
+        <section id="combos" class="py-24 bg-white px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-black mb-2 tracking-tight uppercase">Combos Temáticos</h2>
+                    <p class="text-gray-500 font-medium">Inspirados en las mejores historias, creados para las mejores colitas.</p>
                 </div>
-
-                <div class="lg:w-1/2 p-12 lg:p-24 bg-[#1a202c] text-white">
-                    <h2 class="text-4xl lg:text-6xl font-black italic uppercase tracking-tighter mb-16 leading-tight">La esencia de nuestro <br>compromiso</h2>
-                    
-                    <div class="space-y-12">
-                        <div class="flex gap-8">
-                            <span class="text-strawberry font-black text-5xl italic leading-none opacity-50">01</span>
-                            <div>
-                                <h5 class="font-black text-2xl mb-3 tracking-tighter">Cuidado Humano</h5>
-                                <p class="text-slate-400 text-sm leading-relaxed">Cada porción se elabora con la misma dedicación que tenemos para nuestra propia familia.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                    <!-- Combo Ohana -->
+                    <div class="product-card combo-card p-4 shadow-sm">
+                        <div class="combo-thumb"><span class="text-3xl">🌺</span></div>
+                        <div class="px-6 py-6 flex flex-col flex-grow">
+                            <h3 class="text-2xl font-black text-gray-900 mb-2 italic">Combo Ohana</h3>
+                            <p class="text-gray-400 text-sm mb-8 leading-relaxed">4 paquetes (11u c/u). Patas de Pollo con Zanahoria, Remolacha o Auyama.</p>
+                            <div class="mt-auto flex items-center justify-between">
+                                <span class="text-3xl font-black text-gray-900">$15.00</span>
+                                <div class="qty-control w-32">
+                                    <button onclick="updateQty('Combo Ohana', 15.00, -1)" class="w-8 h-8 rounded-lg bg-white border flex items-center justify-center font-black">-</button>
+                                    <span id="qty-Combo Ohana" class="font-bold">0</span>
+                                    <button onclick="updateQty('Combo Ohana', 15.00, 1)" class="w-8 h-8 rounded-lg bg-strawberry text-white flex items-center justify-center font-black">+</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex gap-8">
-                            <span class="text-strawberry font-black text-5xl italic leading-none opacity-50">02</span>
-                            <div>
-                                <h5 class="font-black text-2xl mb-3 tracking-tighter">Ingredientes Reales</h5>
-                                <p class="text-slate-400 text-sm leading-relaxed">Sin aditivos, sin conservantes. Utilizamos vegetales y frutas frescas de temporada.</p>
+                    </div>
+                    <!-- Combo Fortachón -->
+                    <div class="product-card combo-card p-4 shadow-sm">
+                        <div class="combo-thumb blue"><span class="text-3xl">🛡️</span></div>
+                        <div class="px-6 py-6 flex flex-col flex-grow">
+                            <div class="mb-3"><span class="bg-blue-600 text-white text-[10px] font-black uppercase px-2 py-1 rounded-md tracking-widest">+1 REGALO</span></div>
+                            <h3 class="text-2xl font-black text-gray-900 mb-2 italic">Combo Fortachón</h3>
+                            <p class="text-gray-400 text-sm mb-8 leading-relaxed">8 paquetes (11u c/u). ¡Para el semidiós de la casa! Fuerza y energía.</p>
+                            <div class="mt-auto flex items-center justify-between">
+                                <span class="text-3xl font-black text-gray-900">$28.00</span>
+                                <div class="qty-control w-32">
+                                    <button onclick="updateQty('Combo Fortachón', 28.00, -1)" class="w-8 h-8 rounded-lg bg-white border flex items-center justify-center font-black">-</button>
+                                    <span id="qty-Combo Fortachón" class="font-bold">0</span>
+                                    <button onclick="updateQty('Combo Fortachón', 28.00, 1)" class="w-8 h-8 rounded-lg bg-strawberry text-white flex items-center justify-center font-black">+</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex gap-8">
-                            <span class="text-strawberry font-black text-5xl italic leading-none opacity-50">03</span>
-                            <div>
-                                <h5 class="font-black text-2xl mb-3 tracking-tighter">Orgullo Venezolano</h5>
-                                <p class="text-slate-400 text-sm leading-relaxed">Apoyamos la producción nacional, garantizando frescura desde el origen hasta tu casa.</p>
+                    </div>
+                    <!-- Combo 33/12 -->
+                    <div class="product-card combo-card p-4 shadow-sm">
+                        <div class="combo-thumb pink"><span class="text-3xl">🥛</span></div>
+                        <div class="px-6 py-6 flex flex-col flex-grow">
+                            <h3 class="text-2xl font-black text-gray-900 mb-2 italic">Combo 33/12</h3>
+                            <p class="text-gray-400 text-sm mb-8 leading-relaxed">4 paquetes (11u c/u). Yogurt natural con Fresa, Manzana o Mango.</p>
+                            <div class="mt-auto flex items-center justify-between">
+                                <span class="text-3xl font-black text-gray-900">$18.00</span>
+                                <div class="qty-control w-32">
+                                    <button onclick="updateQty('Combo 33/12', 18.00, -1)" class="w-8 h-8 rounded-lg bg-white border flex items-center justify-center font-black">-</button>
+                                    <span id="qty-Combo 33/12" class="font-bold">0</span>
+                                    <button onclick="updateQty('Combo 33/12', 18.00, 1)" class="w-8 h-8 rounded-lg bg-strawberry text-white flex items-center justify-center font-black">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Amigo Fiel -->
+                    <div class="product-card combo-card p-4 shadow-sm">
+                        <div class="combo-thumb green"><span class="text-3xl">🌟</span></div>
+                        <div class="px-6 py-6 flex flex-col flex-grow">
+                            <h3 class="text-2xl font-black text-gray-900 mb-2 italic">Amigo Fiel</h3>
+                            <p class="text-gray-400 text-sm mb-8 leading-relaxed">4 paquetes (6u c/u). Sabores mixtos: Yogurt y Vegetales.</p>
+                            <div class="mt-auto flex items-center justify-between">
+                                <span class="text-3xl font-black text-gray-900">$10.00</span>
+                                <div class="qty-control w-32">
+                                    <button onclick="updateQty('Amigo Fiel', 10.00, -1)" class="w-8 h-8 rounded-lg bg-white border flex items-center justify-center font-black">-</button>
+                                    <span id="qty-Amigo Fiel" class="font-bold">0</span>
+                                    <button onclick="updateQty('Amigo Fiel', 10.00, 1)" class="w-8 h-8 rounded-lg bg-strawberry text-white flex items-center justify-center font-black">+</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -219,476 +367,263 @@
             </div>
         </section>
 
-        <!-- Líneas de Productos -->
-        <section id="lineas" class="max-w-7xl mx-auto px-6 mb-32">
-            <div class="flex items-end justify-between mb-16">
+        <!-- Esencia -->
+        <section id="metodo" class="py-24 bg-[#0F172A] text-white px-6">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="relative bg-gray-800/40 aspect-[4/3] rounded-[3rem] p-12 flex flex-col justify-center border border-white/5">
+                    <h3 class="text-3xl md:text-5xl italic font-medium text-gray-400 mb-2 leading-tight">"Hecho con el corazón"</h3>
+                    <p class="text-gray-500 uppercase tracking-widest text-xs font-bold">Gelatina Copitón - Venezuela</p>
+                    <div class="absolute -bottom-6 right-10 w-32 h-32 bg-strawberry rounded-[2rem] flex flex-col items-center justify-center shadow-2xl rotate-12">
+                        <span class="text-3xl font-black">0%</span>
+                        <span class="text-[10px] font-black uppercase tracking-tighter">Químicos</span>
+                    </div>
+                </div>
                 <div>
-                    <span class="text-strawberry font-black text-xs uppercase tracking-widest mb-2 block">Selección Especial</span>
-                    <h2 class="text-6xl font-black tracking-tighter italic uppercase">Nuestras Líneas</h2>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                
-                <!-- Línea Vitalidad -->
-                <div class="card-perspective" id="card-Vitalidad">
-                    <div class="card-inner" onclick="toggleFlip('Vitalidad')">
-                        <div class="card-front bg-white p-10 border border-slate-100 shadow-sm">
-                            <div class="mb-10">
-                                <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-3xl mb-6">🦴</div>
-                                <span class="text-[10px] font-black uppercase text-blue-400 tracking-widest block mb-1">Colágeno Natural</span>
-                                <h3 class="text-4xl font-black tracking-tighter uppercase">VITALIDAD</h3>
-                            </div>
-                            <p class="text-slate-400 text-sm leading-relaxed mb-auto italic">Pata de Pollo y Vegetales. Fortalece articulaciones y pelaje de forma natural.</p>
-                            <div class="flex items-center justify-between mt-10">
-                                <div><span class="text-slate-300 font-bold text-[10px] uppercase">Pqte 11u</span><p class="text-4xl font-black">$4.00</p></div>
-                                <div class="bg-slate-900 text-white w-14 h-14 rounded-2xl flex items-center justify-center text-3xl font-light">+</div>
-                            </div>
+                    <h2 class="text-4xl md:text-6xl font-black italic mb-12 leading-[0.8] uppercase tracking-tighter">LA ESENCIA DE NUESTRO EMPRENDIMIENTO</h2>
+                    <div class="space-y-10">
+                        <div class="flex gap-6"><span class="text-strawberry font-black text-2xl italic">01</span>
+                            <div><h4 class="text-xl font-bold mb-2">Artesanal y Humano</h4><p class="text-gray-400 leading-relaxed text-sm">Elaborado a mano con los mismos estándares de calidad que tenemos en nuestro hogar.</p></div>
                         </div>
-                        <div class="card-back" onclick="event.stopPropagation()">
-                            <h4 class="font-black mb-8 uppercase text-center text-slate-400 text-[10px] tracking-[0.3em]">Añadir Cantidad</h4>
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between p-6 bg-white rounded-3xl shadow-sm border border-slate-100">
-                                    <div><p class="text-[10px] font-bold text-slate-300 uppercase">11 Unidades</p><p class="text-2xl font-black text-slate-800">$4.00</p></div>
-                                    <div class="flex items-center gap-4 bg-slate-100 p-2 rounded-2xl">
-                                        <button onclick="updateQty('Vitalidad_11', 4, -1)" class="qty-btn bg-white shadow-sm hover:bg-slate-50">-</button>
-                                        <span id="qty-Vitalidad_11" class="font-black w-6 text-center text-lg">0</span>
-                                        <button onclick="updateQty('Vitalidad_11', 4, 1)" class="qty-btn bg-slate-900 text-white hover:opacity-90">+</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <button onclick="toggleFlip('Vitalidad')" class="mt-10 text-strawberry font-black uppercase text-[10px] tracking-widest w-full">Volver al frente</button>
+                        <div class="flex gap-6"><span class="text-strawberry font-black text-2xl italic">02</span>
+                            <div><h4 class="text-xl font-bold mb-2">Transparencia Nutricional</h4><p class="text-gray-400 leading-relaxed text-sm">Sin químicos ni conservantes. Usamos ingredientes 100% reales que podrías comer tú.</p></div>
+                        </div>
+                        <div class="flex gap-6"><span class="text-strawberry font-black text-2xl italic">03</span>
+                            <div><h4 class="text-xl font-bold mb-2">Sello Local</h4><p class="text-gray-400 leading-relaxed text-sm">Orgullosamente hecho en Venezuela con materia prima fresca de temporada.</p></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Línea Probiótica -->
-                <div class="card-perspective" id="card-Probiotica">
-                    <div class="card-inner" onclick="toggleFlip('Probiotica')">
-                        <div class="card-front bg-strawberry text-white p-10 shadow-xl shadow-pink-100">
-                            <div class="mb-10">
-                                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl mb-6">🍦</div>
-                                <span class="text-[10px] font-black uppercase text-pink-100 tracking-widest block mb-1">Flora Intestinal</span>
-                                <h3 class="text-4xl font-black tracking-tighter uppercase">PROBIÓTICA</h3>
-                            </div>
-                            <p class="text-pink-50 text-sm leading-relaxed mb-auto italic">Yogurt natural descremado y Frutas. Delicioso soporte digestivo diario.</p>
-                            <div class="flex items-center justify-between mt-10">
-                                <div><span class="text-pink-100 font-bold text-[10px] uppercase">Desde</span><p class="text-4xl font-black">$3.00</p></div>
-                                <div class="bg-white text-strawberry w-14 h-14 rounded-2xl flex items-center justify-center text-3xl font-light shadow-lg">+</div>
-                            </div>
-                        </div>
-                        <div class="card-back" onclick="event.stopPropagation()">
-                            <h4 class="font-black mb-6 uppercase text-center text-slate-400 text-[10px] tracking-[0.3em]">Opciones</h4>
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between p-4 bg-white rounded-3xl shadow-sm border border-slate-50">
-                                    <div><p class="text-[10px] font-bold text-slate-300">11U</p><p class="text-xl font-black">$5.00</p></div>
-                                    <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl">
-                                        <button onclick="updateQty('Probiotica_11', 5, -1)" class="qty-btn bg-white shadow-xs text-sm">-</button>
-                                        <span id="qty-Probiotica_11" class="font-black w-4 text-center">0</span>
-                                        <button onclick="updateQty('Probiotica_11', 5, 1)" class="qty-btn bg-slate-900 text-white text-sm">+</button>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between p-4 bg-white rounded-3xl shadow-sm border border-slate-50">
-                                    <div><p class="text-[10px] font-bold text-slate-300">6U</p><p class="text-xl font-black">$3.00</p></div>
-                                    <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl">
-                                        <button onclick="updateQty('Probiotica_6', 3, -1)" class="qty-btn bg-white shadow-xs text-sm">-</button>
-                                        <span id="qty-Probiotica_6" class="font-black w-4 text-center">0</span>
-                                        <button onclick="updateQty('Probiotica_6', 3, 1)" class="qty-btn bg-slate-900 text-white text-sm">+</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <button onclick="toggleFlip('Probiotica')" class="mt-8 text-strawberry font-black uppercase text-[10px] tracking-widest w-full">Volver al frente</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Línea Vegetal -->
-                <div class="card-perspective" id="card-Vegetal">
-                    <div class="card-inner" onclick="toggleFlip('Vegetal')">
-                        <div class="card-front bg-[#A8E6CF] p-10 border border-emerald-200">
-                            <div class="mb-10">
-                                <div class="w-16 h-16 bg-white/50 text-emerald-700 rounded-2xl flex items-center justify-center text-3xl mb-6">🥦</div>
-                                <span class="text-[10px] font-black uppercase text-emerald-700 tracking-widest block mb-1">Ligera y Sana</span>
-                                <h3 class="text-4xl font-black tracking-tighter uppercase text-emerald-900">VEGETAL</h3>
-                            </div>
-                            <p class="text-emerald-800/60 text-sm leading-relaxed mb-auto italic">Gelatina sin sabor premium y Vegetales. Ideal para mantener el peso.</p>
-                            <div class="flex items-center justify-between mt-10">
-                                <div><span class="text-emerald-700 font-bold text-[10px] uppercase">Desde</span><p class="text-4xl font-black text-emerald-900">$2.00</p></div>
-                                <div class="bg-emerald-600 text-white w-14 h-14 rounded-2xl flex items-center justify-center text-3xl font-light shadow-lg">+</div>
-                            </div>
-                        </div>
-                        <div class="card-back" onclick="event.stopPropagation()">
-                            <h4 class="font-black mb-6 uppercase text-center text-slate-400 text-[10px] tracking-[0.3em]">Opciones</h4>
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between p-4 bg-white rounded-3xl shadow-sm border border-slate-50">
-                                    <div><p class="text-[10px] font-bold text-slate-300">11U</p><p class="text-xl font-black text-slate-800">$4.00</p></div>
-                                    <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl">
-                                        <button onclick="updateQty('Vegetal_11', 4, -1)" class="qty-btn bg-white shadow-xs text-sm">-</button>
-                                        <span id="qty-Vegetal_11" class="font-black w-4 text-center">0</span>
-                                        <button onclick="updateQty('Vegetal_11', 4, 1)" class="qty-btn bg-slate-900 text-white text-sm">+</button>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between p-4 bg-white rounded-3xl shadow-sm border border-slate-50">
-                                    <div><p class="text-[10px] font-bold text-slate-300">6U</p><p class="text-xl font-black text-slate-800">$2.00</p></div>
-                                    <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl">
-                                        <button onclick="updateQty('Vegetal_6', 2, -1)" class="qty-btn bg-white shadow-xs text-sm">-</button>
-                                        <span id="qty-Vegetal_6" class="font-black w-4 text-center">0</span>
-                                        <button onclick="updateQty('Vegetal_6', 2, 1)" class="qty-btn bg-slate-900 text-white text-sm">+</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <button onclick="toggleFlip('Vegetal')" class="mt-8 text-strawberry font-black uppercase text-[10px] tracking-widest w-full">Volver al frente</button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- Combos Especiales -->
-        <section id="combos" class="max-w-7xl mx-auto px-6 mb-40">
-            <h2 class="text-4xl font-black mb-12 tracking-tighter uppercase italic">Combos Temáticos</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                <!-- Combo Ohana -->
-                <div class="card-perspective h-[520px]" id="card-ComboOhana">
-                    <div class="card-inner" onclick="toggleFlip('ComboOhana')">
-                        <div class="card-front bg-amber-50 p-8 border border-amber-100">
-                            <div class="aspect-square bg-white rounded-3xl flex items-center justify-center text-5xl shadow-inner mb-6">🌺</div>
-                            <h3 class="text-2xl font-black mb-2 uppercase tracking-tighter">Combo Ohana</h3>
-                            <p class="text-slate-500 text-xs italic mb-auto">4 Pqtes de 11u. Vitalidad (Zanahoria, Remolacha o Auyama).</p>
-                            <div class="flex items-center justify-between mt-6">
-                                <span class="text-3xl font-black">$15.00</span>
-                                <div class="bg-slate-900 text-white w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-light">+</div>
-                            </div>
-                        </div>
-                        <div class="card-back" onclick="event.stopPropagation()">
-                            <h4 class="font-black mb-6 uppercase text-center text-slate-400 text-[10px]">Añadir</h4>
-                            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-50 flex items-center justify-between">
-                                <span class="font-black text-xl">$15.00</span>
-                                <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl">
-                                    <button onclick="updateQty('Combo_Ohana', 15, -1)" class="qty-btn w-8 h-8 bg-white shadow-xs text-xs">-</button>
-                                    <span id="qty-Combo_Ohana" class="font-black w-4 text-center text-sm">0</span>
-                                    <button onclick="updateQty('Combo_Ohana', 15, 1)" class="qty-btn w-8 h-8 bg-slate-900 text-white text-xs">+</button>
-                                </div>
-                            </div>
-                            <button onclick="toggleFlip('ComboOhana')" class="mt-8 text-strawberry font-black uppercase text-[10px] tracking-widest w-full">Volver</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Combo Fortachón -->
-                <div class="card-perspective h-[520px]" id="card-ComboFortachon">
-                    <div class="card-inner" onclick="toggleFlip('ComboFortachon')">
-                        <div class="card-front bg-blue-50 p-8 border border-blue-100">
-                            <div class="aspect-square bg-white rounded-3xl flex items-center justify-center text-5xl shadow-inner mb-6">🛡️</div>
-                            <div class="mb-2">
-                                <span class="bg-blue-600 text-white text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest">+1 REGALO</span>
-                                <h3 class="text-2xl font-black mt-1 uppercase tracking-tighter">Fortachón</h3>
-                            </div>
-                            <p class="text-slate-500 text-xs italic mb-auto">8 Pqtes de 11u. ¡Máximo colágeno y energía para el consentido!</p>
-                            <div class="flex items-center justify-between mt-6">
-                                <span class="text-3xl font-black">$28.00</span>
-                                <div class="bg-slate-900 text-white w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-light">+</div>
-                            </div>
-                        </div>
-                        <div class="card-back" onclick="event.stopPropagation()">
-                            <h4 class="font-black mb-6 uppercase text-center text-slate-400 text-[10px]">Añadir</h4>
-                            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-50 flex items-center justify-between">
-                                <span class="font-black text-xl">$28.00</span>
-                                <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl">
-                                    <button onclick="updateQty('Combo_Fortachon', 28, -1)" class="qty-btn w-8 h-8 bg-white shadow-xs text-xs">-</button>
-                                    <span id="qty-Combo_Fortachon" class="font-black w-4 text-center text-sm">0</span>
-                                    <button onclick="updateQty('Combo_Fortachon', 28, 1)" class="qty-btn w-8 h-8 bg-slate-900 text-white text-xs">+</button>
-                                </div>
-                            </div>
-                            <button onclick="toggleFlip('ComboFortachon')" class="mt-8 text-strawberry font-black uppercase text-[10px] tracking-widest w-full">Volver</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Combo 33/12 -->
-                <div class="card-perspective h-[520px]" id="card-Combo33">
-                    <div class="card-inner" onclick="toggleFlip('Combo33')">
-                        <div class="card-front bg-pink-50 p-8 border border-pink-100">
-                            <div class="aspect-square bg-white rounded-3xl flex items-center justify-center text-5xl shadow-inner mb-6">🍓</div>
-                            <h3 class="text-2xl font-black mb-2 uppercase tracking-tighter">Combo 33/12</h3>
-                            <p class="text-slate-500 text-xs italic mb-auto">4 Pqtes de 11u. Yogurt natural descremado con Frutas reales.</p>
-                            <div class="flex items-center justify-between mt-6">
-                                <span class="text-3xl font-black">$18.00</span>
-                                <div class="bg-slate-900 text-white w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-light">+</div>
-                            </div>
-                        </div>
-                        <div class="card-back" onclick="event.stopPropagation()">
-                            <h4 class="font-black mb-6 uppercase text-center text-slate-400 text-[10px]">Añadir</h4>
-                            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-50 flex items-center justify-between">
-                                <span class="font-black text-xl">$18.00</span>
-                                <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl">
-                                    <button onclick="updateQty('Combo_33_12', 18, -1)" class="qty-btn w-8 h-8 bg-white shadow-xs text-xs">-</button>
-                                    <span id="qty-Combo_33_12" class="font-black w-4 text-center text-sm">0</span>
-                                    <button onclick="updateQty('Combo_33_12', 18, 1)" class="qty-btn w-8 h-8 bg-slate-900 text-white text-xs">+</button>
-                                </div>
-                            </div>
-                            <button onclick="toggleFlip('Combo33')" class="mt-8 text-strawberry font-black uppercase text-[10px] tracking-widest w-full">Volver</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Amigo Fiel -->
-                <div class="card-perspective h-[520px]" id="card-ComboAmigo">
-                    <div class="card-inner" onclick="toggleFlip('ComboAmigo')">
-                        <div class="card-front bg-emerald-50 p-8 border border-emerald-100">
-                            <div class="aspect-square bg-white rounded-3xl flex items-center justify-center text-5xl shadow-inner mb-6">🐕</div>
-                            <h3 class="text-2xl font-black mb-2 uppercase tracking-tighter">Amigo Fiel</h3>
-                            <p class="text-slate-500 text-xs italic mb-auto">4 Pqtes de 6u. Mix de Probióticos y Vegetales. Ideal para rotar.</p>
-                            <div class="flex items-center justify-between mt-6">
-                                <span class="text-3xl font-black">$10.00</span>
-                                <div class="bg-slate-900 text-white w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-light">+</div>
-                            </div>
-                        </div>
-                        <div class="card-back" onclick="event.stopPropagation()">
-                            <h4 class="font-black mb-6 uppercase text-center text-slate-400 text-[10px]">Añadir</h4>
-                            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-50 flex items-center justify-between">
-                                <span class="font-black text-xl">$10.00</span>
-                                <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl">
-                                    <button onclick="updateQty('Combo_Amigo_Fiel', 10, -1)" class="qty-btn w-8 h-8 bg-white shadow-xs text-xs">-</button>
-                                    <span id="qty-Combo_Amigo_Fiel" class="font-black w-4 text-center text-sm">0</span>
-                                    <button onclick="updateQty('Combo_Amigo_Fiel', 10, 1)" class="qty-btn w-8 h-8 bg-slate-900 text-white text-xs">+</button>
-                                </div>
-                            </div>
-                            <button onclick="toggleFlip('ComboAmigo')" class="mt-8 text-strawberry font-black uppercase text-[10px] tracking-widest w-full">Volver</button>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </section>
     </main>
 
+    <!-- VISTA: SOBRE NOSOTROS -->
+    <main id="view-about" class="page-view pt-32 pb-24 min-h-screen px-6">
+        <div class="max-w-4xl mx-auto">
+            <button onclick="switchView('home')" class="text-strawberry font-bold mb-8 flex items-center gap-2 hover:opacity-70 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                Volver al inicio
+            </button>
+            <h2 class="text-5xl md:text-7xl font-black mb-12 tracking-tighter uppercase italic">Nuestra Historia</h2>
+            <div class="bg-white p-8 md:p-12 rounded-[40px] border border-gray-100 shadow-sm text-gray-400 italic text-lg leading-relaxed">
+                Estamos preparando el contenido para contarte por qué creamos Gelatinacopitom. Próximamente compartiremos nuestro viaje contigo.
+            </div>
+        </div>
+    </main>
+
     <!-- VISTA: CARRITO -->
-    <main id="view-cart" class="hidden pt-32 pb-24 min-h-screen px-6 bg-slate-50/50">
-        <div class="max-w-5xl mx-auto">
-            <button onclick="switchView('home')" class="text-strawberry font-black mb-12 flex items-center gap-3 hover:opacity-70 transition uppercase italic text-xs tracking-[0.2em]">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-                Regresar a la tienda
+    <main id="view-cart" class="page-view pt-32 pb-24 min-h-screen px-6 bg-gray-50/50">
+        <div class="max-w-4xl mx-auto">
+            <button onclick="switchView('home')" class="text-strawberry font-bold mb-8 flex items-center gap-2 hover:opacity-70 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                Seguir comprando
             </button>
             
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                <!-- Resumen de Compra -->
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-white p-10 rounded-[3.5rem] border border-slate-100 shadow-sm">
-                        <h3 class="text-2xl font-black mb-10 italic uppercase tracking-tighter border-b border-slate-50 pb-6">Mi Selección</h3>
-                        <div id="cart-items-list" class="space-y-6">
-                            <!-- Items via JS -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <div class="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm h-fit">
+                    <h3 class="text-2xl font-black mb-6 uppercase tracking-tight">Tu Pedido</h3>
+                    <div id="cart-items" class="space-y-4 mb-8"></div>
+                    <div class="border-t border-gray-100 pt-6">
+                        <div class="flex justify-between text-xl font-black uppercase">
+                            <span>Total</span>
+                            <span id="cart-total">$0.00</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Datos de Pedido -->
-                <div class="lg:col-span-1">
-                    <div class="bg-white p-10 rounded-[3.5rem] border border-slate-100 shadow-sm sticky top-32">
-                        <h3 class="text-2xl font-black mb-8 italic uppercase tracking-tighter">Finalizar</h3>
-                        
-                        <div class="space-y-6 mb-10">
-                            <div class="space-y-1">
-                                <label class="text-[9px] font-black uppercase tracking-widest text-slate-300 ml-2">Tu Nombre</label>
-                                <input type="text" id="order-name" placeholder="Ej: Juan Pérez" class="w-full input-minimal rounded-2xl px-6 py-5 font-bold text-slate-700">
-                            </div>
-                            
-                            <div class="space-y-1">
-                                <label class="text-[9px] font-black uppercase tracking-widest text-slate-300 ml-2">Zona de Entrega</label>
-                                <select id="order-delivery" onchange="renderCart()" class="w-full input-minimal rounded-2xl px-6 py-5 font-bold text-slate-700 appearance-none cursor-pointer">
-                                    <option value="0">Sambil Chacao (Punto de Entrega)</option>
-                                    <option value="1.5">Guarenas ($1.50)</option>
-                                    <option value="2.5">Guatire ($2.50)</option>
-                                    <option value="5">Ccs Este/Centro ($5.00)</option>
-                                    <option value="6">Ccs Oeste ($6.00)</option>
-                                </select>
-                            </div>
-
-                            <div class="space-y-1">
-                                <label class="text-[9px] font-black uppercase tracking-widest text-slate-300 ml-2">Método de Pago</label>
-                                <select id="order-payment" class="w-full input-minimal rounded-2xl px-6 py-5 font-bold text-slate-700 appearance-none cursor-pointer">
-                                    <option>Pago Móvil</option>
-                                    <option>Zinli / Wally</option>
-                                    <option>Efectivo ($)</option>
-                                    <option>Binance Pay (USDT)</option>
-                                </select>
-                            </div>
+                <div class="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm">
+                    <h3 class="text-2xl font-black mb-6 uppercase tracking-tight">Finalizar Compra</h3>
+                    <form class="space-y-4" onsubmit="event.preventDefault();">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Nombre y Apellido</label>
+                            <input type="text" id="cust-name" placeholder="Ej: Juan Pérez" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-pink-100 transition">
                         </div>
-
-                        <div class="border-t border-slate-50 pt-8 space-y-4 mb-8">
-                            <div class="flex justify-between items-center text-slate-400 font-black text-[10px] uppercase tracking-widest">
-                                <span>Subtotal</span>
-                                <span id="cart-subtotal">$0.00</span>
-                            </div>
-                            <div class="flex justify-between items-center text-slate-400 font-black text-[10px] uppercase tracking-widest">
-                                <span>Envío</span>
-                                <span id="cart-delivery-display">$0.00</span>
-                            </div>
-                            <div class="flex justify-between items-center text-4xl font-black pt-4 italic">
-                                <span>TOTAL</span>
-                                <span id="cart-total" class="text-strawberry tracking-tighter">$0.00</span>
-                            </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Lugar de Entrega</label>
+                            <select id="cust-delivery" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-pink-100 transition">
+                                <optgroup label="Puntos Gratuitos">
+                                    <option>Sambil Chacao (Gratis)</option>
+                                    <option>Plaza Venezuela (Gratis)</option>
+                                </optgroup>
+                                <optgroup label="Miranda">
+                                    <option>Guarenas ($1 - $1.5)</option>
+                                    <option>Guatire ($2 - $2.5)</option>
+                                </optgroup>
+                                <optgroup label="Delivery VIP (+$5.00)">
+                                    <option>Parque Miranda</option>
+                                    <option>Las Mercedes</option>
+                                    <option>Altamira</option>
+                                    <option>Chacao</option>
+                                    <option>La California</option>
+                                </optgroup>
+                            </select>
                         </div>
-
-                        <button onclick="sendWhatsApp()" class="w-full bg-strawberry text-white py-6 rounded-[2.5rem] font-black text-xl shadow-xl shadow-pink-100 hover:opacity-90 transition transform hover:scale-105 uppercase italic tracking-tighter">
-                            Enviar Pedido
-                        </button>
-                    </div>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Método de Pago</label>
+                            <select id="cust-payment" class="w-full bg-gray-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-pink-100 transition">
+                                <option>Pago Móvil</option>
+                                <option>Transferencia Bancaria</option>
+                                <option>Zinli</option>
+                                <option>Wally</option>
+                                <option>Efectivo $</option>
+                                <option>Binance USDT</option>
+                            </select>
+                        </div>
+                        <button onclick="enviarPedidoWhatsApp()" class="w-full bg-strawberry text-white py-5 rounded-3xl font-black text-lg shadow-xl shadow-pink-100 hover:opacity-90 transition mt-6 uppercase tracking-wider">Enviar por WhatsApp</button>
+                    </form>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="py-24 bg-white border-t border-slate-50 text-center">
-        <div class="w-14 h-14 bg-strawberry rounded-full flex items-center justify-center text-white font-black text-xl italic mx-auto mb-8 shadow-lg shadow-pink-50">G</div>
-        <p class="text-[10px] text-slate-300 font-black uppercase tracking-[0.8em] mb-4">Gelatinacopitom Original</p>
-        <div class="flex justify-center gap-6 text-slate-400 font-bold text-xs uppercase tracking-widest">
-            <a href="#" class="hover:text-strawberry transition">Instagram</a>
-            <a href="#" class="hover:text-strawberry transition">WhatsApp</a>
+    <footer class="py-24 bg-white border-t border-gray-50 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex justify-center items-center gap-2 mb-8 italic">
+                <div class="w-8 h-8 bg-strawberry rounded-full flex items-center justify-center text-white font-black text-sm">G</div>
+                <div class="text-xl font-black tracking-tighter text-gray-900 uppercase">Gelatinacopitom</div>
+            </div>
+            <p class="text-[10px] text-gray-300 font-bold uppercase tracking-[0.2em]">© 2024 Gelatinacopitom. Hecho en Venezuela.</p>
         </div>
     </footer>
 
     <script>
-        // Configuración
-        const WA_NUMBER = "584120000000"; // Reemplaza con tu número real
+        // CONFIGURACIÓN GLOBAL
+        const WHATSAPP_PHONE = "584128657151"; // Cambiar por tu número real para pruebas
         let cart = {};
 
-        // Función para girar tarjetas
-        function toggleFlip(cardId) {
-            const card = document.getElementById('card-' + cardId);
-            card.classList.toggle('is-flipped');
+        function switchView(viewId) {
+            const currentView = document.querySelector('.active-view');
+            const nextView = document.getElementById('view-' + viewId);
+            
+            if (currentView && currentView.id !== 'view-' + viewId) {
+                // Animación de salida para la vista actual
+                currentView.classList.add('exit-view');
+                
+                setTimeout(() => {
+                    currentView.classList.remove('active-view', 'exit-view');
+                    currentView.style.display = 'none';
+                    
+                    // Mostrar siguiente vista
+                    nextView.style.display = 'block';
+                    nextView.classList.add('active-view');
+                    window.scrollTo(0, 0);
+                }, 400);
+            } else {
+                // Caso inicial o misma vista
+                nextView.style.display = 'block';
+                nextView.classList.add('active-view');
+            }
+            
+            if (viewId === 'cart') renderCart();
         }
 
-        // Lógica del Carrito (Mejorada de V0.1.2)
+        function toggleMenu(isOpen) {
+            const menu = document.getElementById('mobile-menu');
+            if (isOpen) menu.classList.add('open');
+            else menu.classList.remove('open');
+        }
+
         function updateQty(id, price, delta) {
-            if (!cart[id]) {
-                cart[id] = { 
-                    qty: 0, 
-                    price: price, 
-                    name: id.replace(/_/g, ' ') 
-                };
-            }
+            if (!cart[id]) cart[id] = { qty: 0, price: price };
             
             cart[id].qty += delta;
             if (cart[id].qty < 0) cart[id].qty = 0;
             
-            // Actualizar displays visuales en todas las tarjetas
-            document.querySelectorAll(`[id="qty-${id}"]`).forEach(el => {
-                el.innerText = cart[id].qty;
-            });
+            const qtyLabel = document.getElementById(`qty-${id}`);
+            if (qtyLabel) qtyLabel.innerText = cart[id].qty;
+            
+            updateCartCount();
+        }
 
-            updateBadge();
-            if (!document.getElementById('view-cart').classList.contains('hidden')) {
+        function removeFromCart(id) {
+            if (cart[id]) {
+                cart[id].qty = 0;
+                // Actualizar contador en la UI de home por si acaso
+                const qtyLabel = document.getElementById(`qty-${id}`);
+                if (qtyLabel) qtyLabel.innerText = 0;
+                
+                updateCartCount();
                 renderCart();
             }
         }
 
-        function updateBadge() {
-            let total = 0;
-            for (let k in cart) total += cart[k].qty;
-            document.getElementById('cart-count').innerText = total;
-        }
-
-        function switchView(view) {
-            const home = document.getElementById('view-home');
-            const cartView = document.getElementById('view-cart');
-            if (view === 'cart') {
-                home.classList.add('hidden');
-                cartView.classList.remove('hidden');
-                renderCart();
-            } else {
-                home.classList.remove('hidden');
-                cartView.classList.add('hidden');
+        function updateCartCount() {
+            let totalQty = 0;
+            for (let id in cart) {
+                totalQty += cart[id].qty;
             }
-            window.scrollTo(0, 0);
+            document.getElementById('cart-count').innerText = totalQty;
         }
 
         function renderCart() {
-            const list = document.getElementById('cart-items-list');
-            list.innerHTML = '';
-            let subtotal = 0;
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            container.innerHTML = "";
+            let total = 0;
             let hasItems = false;
 
             for (let id in cart) {
                 if (cart[id].qty > 0) {
                     hasItems = true;
-                    let totalItem = cart[id].qty * cart[id].price;
-                    subtotal += totalItem;
-                    list.innerHTML += `
-                        <div class="flex justify-between items-center p-8 bg-slate-50/50 rounded-[2.5rem] border border-slate-100 group hover:bg-white transition">
-                            <div class="flex items-center gap-6">
-                                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm">🦴</div>
+                    let itemTotal = cart[id].qty * cart[id].price;
+                    total += itemTotal;
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                            <div class="flex items-center gap-4">
+                                <button onclick="removeFromCart('${id}')" class="delete-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                </button>
                                 <div>
-                                    <h5 class="font-black text-lg uppercase tracking-tighter text-slate-800">${cart[id].name}</h5>
-                                    <p class="text-xs font-black text-strawberry uppercase italic">${cart[id].qty} unidades x $${cart[id].price.toFixed(2)}</p>
+                                    <p class="font-bold text-gray-900">${id}</p>
+                                    <p class="text-xs text-strawberry font-bold uppercase tracking-widest">${cart[id].qty} x $${cart[id].price.toFixed(2)}</p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-8">
-                                <div class="flex items-center gap-3 bg-white p-1.5 rounded-xl border border-slate-100">
-                                    <button onclick="updateQty('${id}', ${cart[id].price}, -1)" class="w-8 h-8 flex items-center justify-center font-black">-</button>
-                                    <span class="font-black w-4 text-center">${cart[id].qty}</span>
-                                    <button onclick="updateQty('${id}', ${cart[id].price}, 1)" class="w-8 h-8 flex items-center justify-center font-black bg-slate-900 text-white rounded-lg">+</button>
-                                </div>
-                                <span class="font-black text-2xl text-slate-900 tracking-tighter">$${totalItem.toFixed(2)}</span>
-                            </div>
+                            <span class="font-black text-lg">$${itemTotal.toFixed(2)}</span>
                         </div>
                     `;
                 }
             }
 
-            const deliveryCost = parseFloat(document.getElementById('order-delivery').value);
-            const totalFinal = subtotal + deliveryCost;
-
-            document.getElementById('cart-subtotal').innerText = `$${subtotal.toFixed(2)}`;
-            document.getElementById('cart-delivery-display').innerText = `$${deliveryCost.toFixed(2)}`;
-            document.getElementById('cart-total').innerText = `$${totalFinal.toFixed(2)}`;
-
             if (!hasItems) {
-                list.innerHTML = `
-                    <div class="py-20 text-center">
-                        <div class="text-6xl mb-6 grayscale opacity-30">🛒</div>
-                        <p class="text-slate-300 font-black italic uppercase text-xs tracking-[0.4em]">El carrito está vacío</p>
-                        <button onclick="switchView('home')" class="mt-8 text-strawberry font-black underline text-xs uppercase tracking-widest">Ir a elegir algo</button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="text-center py-12"><p class="text-gray-400 italic">Tu carrito está vacío...</p></div>`;
             }
+            totalEl.innerText = `$${total.toFixed(2)}`;
         }
 
-        function sendWhatsApp() {
-            const name = document.getElementById('order-name').value || "Cliente";
-            const deliverySel = document.getElementById('order-delivery');
-            const deliveryZone = deliverySel.options[deliverySel.selectedIndex].text;
-            const payment = document.getElementById('order-payment').value;
-            
-            let itemsText = "";
-            let sub = 0;
-            for(let k in cart) {
-                if(cart[k].qty > 0) {
-                    itemsText += `• ${cart[k].name} (${cart[k].qty}u) - $${(cart[k].qty * cart[k].price).toFixed(2)}%0A`;
-                    sub += cart[k].qty * cart[k].price;
-                }
-            }
-            
-            if(!itemsText) {
-                alert("Por favor, añade productos antes de enviar.");
+        function enviarPedidoWhatsApp() {
+            // Validar si hay productos
+            let hasItems = false;
+            for(let id in cart) if(cart[id].qty > 0) hasItems = true;
+
+            if(!hasItems) {
+                alert("Primero añade algunos productos al carrito");
                 return;
             }
 
-            const dCost = parseFloat(deliverySel.value);
-            const total = sub + dCost;
+            const name = document.getElementById('cust-name').value || "Cliente";
+            const delivery = document.getElementById('cust-delivery').value;
+            const payment = document.getElementById('cust-payment').value;
 
-            const msg = `🐾 *NUEVO PEDIDO GELATINACOPITOM*%0A%0A` +
-                        `👤 *Responsable:* ${name}%0A` +
-                        `📍 *Zona:* ${deliveryZone}%0A` +
-                        `💳 *Pago:* ${payment}%0A%0A` +
-                        `🛒 *DETALLE:*%0A${itemsText}%0A` +
-                        `🚚 *Envío:* $${dCost.toFixed(2)}%0A` +
-                        `✨ *TOTAL A PAGAR: $${total.toFixed(2)}*`;
+            let mensaje = `🐾 *PEDIDO GELATINACOPITOM*%0A`;
+            mensaje += `--------------------------%0A`;
+            mensaje += `*Nombre:* ${name}%0A`;
+            mensaje += `*Entrega:* ${delivery}%0A`;
+            mensaje += `*Pago:* ${payment}%0A%0A`;
+            mensaje += `*DETALLE DEL PEDIDO:*%0A`;
 
-            window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
+            let total = 0;
+            for (let id in cart) {
+                if (cart[id].qty > 0) {
+                    let sub = cart[id].qty * cart[id].price;
+                    mensaje += `- ${id} (${cart[id].qty}u) - $${sub.toFixed(2)}%0A`;
+                    total += sub;
+                }
+            }
+
+            mensaje += `%0A*TOTAL A PAGAR: $${total.toFixed(2)}*%0A`;
+            mensaje += `--------------------------%0A`;
+            mensaje += `_Enviado desde el catálogo web_`;
+
+            window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${mensaje}`, '_blank');
         }
     </script>
 </body>
